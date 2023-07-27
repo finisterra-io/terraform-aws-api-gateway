@@ -127,3 +127,118 @@ variable "stage_name" {
   default     = ""
   description = "The name of the stage"
 }
+
+
+variable "create_api_gateway_deployment" {
+  type        = bool
+  default     = false
+  description = "Create API Gateway Deployment"
+}
+
+variable "create_api_gateway_stage" {
+  type        = bool
+  default     = false
+  description = "Create API Gateway Stage"
+}
+
+variable "vpc_link_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable VPC Link"
+}
+
+variable "vpc_link_name" {
+  type        = string
+  default     = ""
+  description = "Name of the VPC Link"
+}
+
+variable "vpc_link_description" {
+  type        = string
+  default     = ""
+  description = "Description of the VPC Link"
+}
+
+variable "description" {
+  type        = string
+  default     = ""
+  description = "Description of the API Gateway"
+}
+
+variable "body" {
+  type        = string
+  default     = ""
+  description = "The OpenAPI specification of the API Gateway"
+}
+
+variable "stage_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Tags to be applied to the stage"
+}
+
+variable "stage_variables" {
+  type        = map(string)
+  default     = {}
+  description = "Stage variables to be applied to the stage"
+}
+
+variable "access_log_settings" {
+  type        = map(string)
+  default     = {}
+  description = "Access log settings for the stage"
+}
+
+variable "method_path" {
+  type        = string
+  default     = ""
+  description = "The path of the method in API Gateway"
+}
+
+variable "cache_data_encrypted" {
+  type        = bool
+  default     = false
+  description = "Enable encryption of cache data"
+}
+
+variable "cache_ttl_in_seconds" {
+  type        = number
+  default     = 300
+  description = "The time-to-live (TTL) period, in seconds, that specifies how long API Gateway caches responses"
+}
+
+variable "caching_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable caching of responses"
+}
+
+variable "data_trace_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable data tracing for API Gateway"
+}
+
+variable "require_authorization_for_cache_control" {
+  type        = bool
+  default     = false
+  description = "Enable authorization for cache control"
+}
+
+variable "throttling_burst_limit" {
+  type        = number
+  default     = 5000
+  description = "The API request burst limit"
+}
+
+variable "throttling_rate_limit" {
+  type        = number
+  default     = 10000
+  description = "The API request steady-state rate limit"
+}
+
+variable "unauthorized_cache_control_header_strategy" {
+  type        = string
+  default     = "SUCCEED_WITH_RESPONSE_HEADER"
+  description = "The cache control header strategy for unauthorized responses"
+}
