@@ -34,5 +34,5 @@ output "invoke_url" {
 
 output "stage_arn" {
   description = "The ARN of the gateway stage"
-  value       = module.this.enabled && var.create_api_gateway_stage ? aws_api_gateway_stage.this[0].arn : null
+  value       = module.this.enabled && var.create_api_gateway_stage ? aws_api_gateway_stage.this[*].arn : null
 }
