@@ -7,14 +7,14 @@ variable "openapi_config" {
 }
 
 variable "endpoint_type" {
-  type        = string
+  type        = list(string)
   description = "The type of the endpoint. One of - PUBLIC, PRIVATE, REGIONAL"
-  default     = "REGIONAL"
+  default     = ["REGIONAL"]
 
-  validation {
-    condition     = contains(["EDGE", "REGIONAL", "PRIVATE"], var.endpoint_type)
-    error_message = "Valid values for var: endpoint_type are (EDGE, REGIONAL, PRIVATE)."
-  }
+  # validation {
+  #   condition     = contains(["EDGE", "REGIONAL", "PRIVATE"], var.endpoint_type)
+  #   error_message = "Valid values for var: endpoint_type are (EDGE, REGIONAL, PRIVATE)."
+  # }
 }
 
 variable "logging_level" {
