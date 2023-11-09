@@ -69,8 +69,8 @@ resource "aws_api_gateway_stage" "this" {
     for_each = var.access_log_settings
 
     content {
-      destination_arn = each.value.destination_arn
-      format          = replace(each.value.format, "\n", "")
+      destination_arn = access_log_settings.value.destination_arn
+      format          = replace(access_log_settings.value.format, "\n", "")
     }
   }
 }
