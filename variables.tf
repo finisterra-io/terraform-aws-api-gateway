@@ -184,8 +184,8 @@ variable "stage_variables" {
 }
 
 variable "access_log_settings" {
-  type        = map(string)
-  default     = {}
+  type        = list(any)
+  default     = list
   description = "Access log settings for the stage"
 }
 
