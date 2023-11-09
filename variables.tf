@@ -185,7 +185,7 @@ variable "stage_variables" {
 
 variable "access_log_settings" {
   type        = list(any)
-  default     = list
+  default     = []
   description = "Access log settings for the stage"
 }
 
