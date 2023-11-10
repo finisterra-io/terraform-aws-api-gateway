@@ -242,3 +242,9 @@ variable "unauthorized_cache_control_header_strategy" {
   default     = "SUCCEED_WITH_RESPONSE_HEADER"
   description = "The cache control header strategy for unauthorized responses"
 }
+
+variable "create_api_gateway_method_settings" {
+  type        = bool
+  default     = false
+  description = "Create API Gateway Method Settings"
+}
