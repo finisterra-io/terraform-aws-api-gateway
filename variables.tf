@@ -267,3 +267,9 @@ variable "stage_description" {
   default     = null
   description = "The description of the stage"
 }
+
+variable "deployment_description" {
+  type        = string
+  default     = null
+  description = "The description of the deployment"
+}

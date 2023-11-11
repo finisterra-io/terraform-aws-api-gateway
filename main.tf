@@ -40,6 +40,7 @@ resource "aws_api_gateway_rest_api_policy" "this" {
 resource "aws_api_gateway_deployment" "this" {
   count       = local.enabled && var.create_api_gateway_deployment ? 1 : 0
   rest_api_id = aws_api_gateway_rest_api.this[0].id
+  description = var.deployment_description
 
   # triggers = {
   #   redeployment = sha1(jsonencode(aws_api_gateway_rest_api.this[0].body))
