@@ -51,12 +51,16 @@ resource "aws_api_gateway_deployment" "this" {
 }
 
 resource "aws_api_gateway_stage" "this" {
-  count                = local.enabled && var.create_api_gateway_stage ? 1 : 0
-  deployment_id        = aws_api_gateway_deployment.this[0].id
-  rest_api_id          = aws_api_gateway_rest_api.this[0].id
-  stage_name           = var.stage_name != "" ? var.stage_name : module.this.stage
-  xray_tracing_enabled = var.xray_tracing_enabled
-  tags                 = var.stage_tags
+  count                 = local.enabled && var.create_api_gateway_stage ? 1 : 0
+  deployment_id         = aws_api_gateway_deployment.this[0].id
+  rest_api_id           = aws_api_gateway_rest_api.this[0].id
+  stage_name            = var.stage_name != "" ? var.stage_name : module.this.stage
+  xray_tracing_enabled  = var.xray_tracing_enabled
+  cache_cluster_enabled = var.stage_cache_cluster_enabled
+  cache_cluster_size    = var.stage_cache_cluster_size
+  description           = var.stage_description
+
+  tags = var.stage_tags
 
   variables = var.stage_variables
 

@@ -20,12 +20,12 @@ variable "endpoint_type" {
 variable "logging_level" {
   type        = string
   description = "The logging level of the API. One of - OFF, INFO, ERROR"
-  default     = "INFO"
+  default     = null
 
-  validation {
-    condition     = contains(["OFF", "INFO", "ERROR"], var.logging_level)
-    error_message = "Valid values for var: logging_level are (OFF, INFO, ERROR)."
-  }
+  # validation {
+  #   condition     = contains(["OFF", "INFO", "ERROR"], var.logging_level)
+  #   error_message = "Valid values for var: logging_level are (OFF, INFO, ERROR)."
+  # }
 }
 
 variable "metrics_enabled" {
@@ -247,4 +247,23 @@ variable "create_api_gateway_method_settings" {
   type        = bool
   default     = false
   description = "Create API Gateway Method Settings"
+}
+
+
+variable "stage_cache_cluster_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable cache cluster for the stage"
+}
+
+variable "stage_cache_cluster_size" {
+  type        = string
+  default     = null
+  description = "The size of the cache cluster for the stage"
+}
+
+variable "stage_description" {
+  type        = string
+  default     = null
+  description = "The description of the stage"
 }
