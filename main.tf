@@ -61,7 +61,7 @@ resource "aws_api_gateway_stage" "this" {
   cache_cluster_size    = try(each.value.cache_cluster_size, null)
   description           = try(each.value.description, "")
 
-  tags = each.value.tags
+  tags = try(each.value.tags, {})
 
   variables = try(each.value.variables, null)
 
