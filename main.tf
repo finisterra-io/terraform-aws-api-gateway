@@ -38,7 +38,7 @@ resource "aws_api_gateway_rest_api_policy" "this" {
 # }
 
 resource "aws_api_gateway_deployment" "this" {
-  for_each    = local.enabled ? var.stages : {}
+  for_each    = var.stages
   rest_api_id = aws_api_gateway_rest_api.this[0].id
   description = each.value.deployment_description
 
@@ -52,7 +52,7 @@ resource "aws_api_gateway_deployment" "this" {
 }
 
 resource "aws_api_gateway_stage" "this" {
-  for_each              = local.enabled ? var.stages : {}
+  for_each              = var.stages
   deployment_id         = aws_api_gateway_deployment.this[each.key].id
   rest_api_id           = aws_api_gateway_rest_api.this[0].id
   stage_name            = each.key
