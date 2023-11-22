@@ -58,12 +58,12 @@ resource "aws_api_gateway_stage" "this" {
   stage_name            = each.key
   xray_tracing_enabled  = each.value.xray_tracing_enabled
   cache_cluster_enabled = each.value.cache_cluster_enabled
-  cache_cluster_size    = each.value.cache_cluster_size
-  description           = each.value.description
+  cache_cluster_size    = try(each.value.cache_cluster_size, null)
+  description           = try(each.value.description, "")
 
   tags = each.value.tags
 
-  variables = each.value.variables
+  variables = try(each.value.variables, null)
 
   # variables = {
   #   vpc_link_id = local.vpc_link_enabled ? aws_api_gateway_vpc_link.this[0].id : null
