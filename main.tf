@@ -38,9 +38,9 @@ resource "aws_api_gateway_rest_api_policy" "this" {
 # }
 
 resource "aws_api_gateway_deployment" "this" {
-  count       = local.enabled && var.create_api_gateway_deployment ? 1 : 0
+  for_each    = local.enabled ? var.stages : {}
   rest_api_id = aws_api_gateway_rest_api.this[0].id
-  description = var.deployment_description
+  description = each.value.deployment_description
 
   # triggers = {
   #   redeployment = sha1(jsonencode(aws_api_gateway_rest_api.this[0].body))
@@ -52,18 +52,18 @@ resource "aws_api_gateway_deployment" "this" {
 }
 
 resource "aws_api_gateway_stage" "this" {
-  count                 = local.enabled && var.create_api_gateway_stage ? 1 : 0
-  deployment_id         = aws_api_gateway_deployment.this[0].id
+  for_each              = local.enabled ? var.stages : {}
+  deployment_id         = aws_api_gateway_deployment.this[each.key].id
   rest_api_id           = aws_api_gateway_rest_api.this[0].id
-  stage_name            = var.stage_name != "" ? var.stage_name : module.this.stage
-  xray_tracing_enabled  = var.xray_tracing_enabled
-  cache_cluster_enabled = var.stage_cache_cluster_enabled
-  cache_cluster_size    = var.stage_cache_cluster_size
-  description           = var.stage_description
+  stage_name            = each.key
+  xray_tracing_enabled  = each.value.xray_tracing_enabled
+  cache_cluster_enabled = each.value.cache_cluster_enabled
+  cache_cluster_size    = each.value.cache_cluster_size
+  description           = each.value.description
 
-  tags = var.stage_tags
+  tags = each.value.tags
 
-  variables = var.stage_variables
+  variables = each.value.variables
 
   # variables = {
   #   vpc_link_id = local.vpc_link_enabled ? aws_api_gateway_vpc_link.this[0].id : null
@@ -71,7 +71,7 @@ resource "aws_api_gateway_stage" "this" {
 
 
   dynamic "access_log_settings" {
-    for_each = var.access_log_settings
+    for_each = each.value.access_log_settings
 
     content {
       destination_arn = access_log_settings.value.destination_arn
