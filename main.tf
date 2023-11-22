@@ -71,7 +71,7 @@ resource "aws_api_gateway_stage" "this" {
 
 
   dynamic "access_log_settings" {
-    for_each = each.value.access_log_settings
+    for_each = try(each.value.access_log_settings, [])
 
     content {
       destination_arn = access_log_settings.value.destination_arn
