@@ -38,9 +38,9 @@ resource "aws_api_gateway_rest_api_policy" "this" {
 # }
 
 resource "aws_api_gateway_deployment" "this" {
-  for_each    = var.stages
+  for_each    = var.deployments
   rest_api_id = aws_api_gateway_rest_api.this[0].id
-  description = try(each.value.deployment_description, "")
+  description = try(each.value.description, "")
 
   # triggers = {
   #   redeployment = sha1(jsonencode(aws_api_gateway_rest_api.this[0].body))
@@ -51,27 +51,64 @@ resource "aws_api_gateway_deployment" "this" {
   }
 }
 
+# resource "aws_api_gateway_stage" "this" {
+#   #loop over the stages as in teh example above
+#   for_each = var.deployments
+
+#   deployment_id         = aws_api_gateway_deployment.this[each.key].id
+#   rest_api_id           = aws_api_gateway_rest_api.this[0].id
+#   stage_name            = each.key
+#   xray_tracing_enabled  = each.value.xray_tracing_enabled
+#   cache_cluster_enabled = each.value.cache_cluster_enabled
+#   cache_cluster_size    = try(each.value.cache_cluster_size, null)
+#   description           = try(each.value.description, "")
+
+#   tags = try(each.value.tags, {})
+
+#   variables = try(each.value.variables, null)
+
+#   # variables = {
+#   #   vpc_link_id = local.vpc_link_enabled ? aws_api_gateway_vpc_link.this[0].id : null
+#   # }
+
+
+#   dynamic "access_log_settings" {
+#     for_each = try(each.value.access_log_settings, [])
+
+#     content {
+#       destination_arn = access_log_settings.value.destination_arn
+#       format          = replace(access_log_settings.value.format, "\n", "")
+#     }
+#   }
+# }
+
+
 resource "aws_api_gateway_stage" "this" {
-  for_each              = var.stages
-  deployment_id         = aws_api_gateway_deployment.this[each.key].id
+  # Create a flattened list of all stages in all deployments
+  for_each = { for idx, value in flatten([
+    for deployment_id, deployment in var.deployments : [
+      for stage_id, stage in deployment.stages : {
+        deployment_id = deployment_id
+        stage_id      = stage_id
+        stage         = stage
+      }
+    ]
+  ]) : "${value.deployment_id}-${value.stage_id}" => value }
+
+  deployment_id         = aws_api_gateway_deployment.this[each.value.deployment_id].id
   rest_api_id           = aws_api_gateway_rest_api.this[0].id
-  stage_name            = each.key
-  xray_tracing_enabled  = each.value.xray_tracing_enabled
-  cache_cluster_enabled = each.value.cache_cluster_enabled
-  cache_cluster_size    = try(each.value.cache_cluster_size, null)
-  description           = try(each.value.description, "")
+  stage_name            = each.value.stage_id
+  xray_tracing_enabled  = each.value.stage.xray_tracing_enabled
+  cache_cluster_enabled = each.value.stage.cache_cluster_enabled
+  cache_cluster_size    = try(each.value.stage.cache_cluster_size, null)
+  description           = try(each.value.stage.description, "")
 
-  tags = try(each.value.tags, {})
+  tags = try(each.value.stage.tags, {})
 
-  variables = try(each.value.variables, null)
-
-  # variables = {
-  #   vpc_link_id = local.vpc_link_enabled ? aws_api_gateway_vpc_link.this[0].id : null
-  # }
-
+  variables = try(each.value.stage.variables, null)
 
   dynamic "access_log_settings" {
-    for_each = try(each.value.access_log_settings, [])
+    for_each = try(each.value.stage.access_log_settings, [])
 
     content {
       destination_arn = access_log_settings.value.destination_arn

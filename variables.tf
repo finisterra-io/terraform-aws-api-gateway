@@ -279,3 +279,9 @@ variable "stages" {
   default     = {}
   description = "The stages to be created"
 }
+
+variable "deployments" {
+  type        = any
+  default     = {}
+  description = "The deployments to be created"
+}
