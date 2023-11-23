@@ -275,7 +275,7 @@ variable "deployment_description" {
 }
 
 variable "stages" {
-  type        = map(any)
+  type        = any
   default     = {}
   description = "The stages to be created"
 }
