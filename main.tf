@@ -51,43 +51,12 @@ resource "aws_api_gateway_deployment" "this" {
   }
 }
 
-# resource "aws_api_gateway_stage" "this" {
-#   #loop over the stages as in teh example above
-#   for_each = var.deployments
-
-#   deployment_id         = aws_api_gateway_deployment.this[each.key].id
-#   rest_api_id           = aws_api_gateway_rest_api.this[0].id
-#   stage_name            = each.key
-#   xray_tracing_enabled  = each.value.xray_tracing_enabled
-#   cache_cluster_enabled = each.value.cache_cluster_enabled
-#   cache_cluster_size    = try(each.value.cache_cluster_size, null)
-#   description           = try(each.value.description, "")
-
-#   tags = try(each.value.tags, {})
-
-#   variables = try(each.value.variables, null)
-
-#   # variables = {
-#   #   vpc_link_id = local.vpc_link_enabled ? aws_api_gateway_vpc_link.this[0].id : null
-#   # }
-
-
-#   dynamic "access_log_settings" {
-#     for_each = try(each.value.access_log_settings, [])
-
-#     content {
-#       destination_arn = access_log_settings.value.destination_arn
-#       format          = replace(access_log_settings.value.format, "\n", "")
-#     }
-#   }
-# }
-
 
 resource "aws_api_gateway_stage" "this" {
-  # Create a flattened list of all stages in all deployments
+  # Create a flattened list of all stages in all deployments, accounting for deployments without stages
   for_each = { for idx, value in flatten([
     for deployment_id, deployment in var.deployments : [
-      for stage_id, stage in deployment.stages : {
+      for stage_id, stage in try(deployment.stages, {}) : { # Use try to handle missing stages
         deployment_id = deployment_id
         stage_id      = stage_id
         stage         = stage
@@ -116,6 +85,7 @@ resource "aws_api_gateway_stage" "this" {
     }
   }
 }
+
 
 # Set the logging, metrics and tracing levels for all methods
 resource "aws_api_gateway_method_settings" "all" {
