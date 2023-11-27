@@ -74,7 +74,7 @@ resource "aws_api_gateway_stage" "this" {
 
   tags = try(each.value.stage.tags, {})
 
-  variables = try(each.value.stage.variables, null).aws_api_gateway_method_settings
+  variables = try(each.value.stage.variables, null)
 
   dynamic "access_log_settings" {
     for_each = try(each.value.stage.access_log_settings, [])
