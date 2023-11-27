@@ -285,3 +285,9 @@ variable "deployments" {
   default     = {}
   description = "The deployments to be created"
 }
+
+variable "api_gateway_method_settings" {
+  type        = any
+  default     = {}
+  description = "The API Gateway Method Settings to be created"
+}

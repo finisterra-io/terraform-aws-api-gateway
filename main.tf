@@ -74,7 +74,7 @@ resource "aws_api_gateway_stage" "this" {
 
   tags = try(each.value.stage.tags, {})
 
-  variables = try(each.value.stage.variables, null)
+  variables = try(each.value.stage.variables, null).aws_api_gateway_method_settings
 
   dynamic "access_log_settings" {
     for_each = try(each.value.stage.access_log_settings, [])
@@ -89,22 +89,23 @@ resource "aws_api_gateway_stage" "this" {
 
 # Set the logging, metrics and tracing levels for all methods
 resource "aws_api_gateway_method_settings" "all" {
-  count       = local.enabled && var.create_api_gateway_method_settings ? 1 : 0
+  for_each = local.enabled ? var.api_gateway_method_settings : {}
+
   rest_api_id = aws_api_gateway_rest_api.this[0].id
-  stage_name  = var.stage_name
-  method_path = var.method_path
+  stage_name  = each.value.stage_name
+  method_path = each.value.method_path
 
   settings {
-    cache_data_encrypted                       = var.cache_data_encrypted
-    cache_ttl_in_seconds                       = var.cache_ttl_in_seconds
-    caching_enabled                            = var.caching_enabled
-    data_trace_enabled                         = var.data_trace_enabled
-    logging_level                              = var.logging_level
-    metrics_enabled                            = var.metrics_enabled
-    require_authorization_for_cache_control    = var.require_authorization_for_cache_control
-    throttling_burst_limit                     = var.throttling_burst_limit
-    throttling_rate_limit                      = var.throttling_rate_limit
-    unauthorized_cache_control_header_strategy = var.unauthorized_cache_control_header_strategy
+    cache_data_encrypted                       = each.value.cache_data_encrypted
+    cache_ttl_in_seconds                       = each.value.cache_ttl_in_seconds
+    caching_enabled                            = each.value.caching_enabled
+    data_trace_enabled                         = each.value.data_trace_enabled
+    logging_level                              = each.value.logging_level
+    metrics_enabled                            = each.value.metrics_enabled
+    require_authorization_for_cache_control    = each.value.require_authorization_for_cache_control
+    throttling_burst_limit                     = each.value.throttling_burst_limit
+    throttling_rate_limit                      = each.value.throttling_rate_limit
+    unauthorized_cache_control_header_strategy = each.value.unauthorized_cache_control_header_strategy
   }
 }
 
